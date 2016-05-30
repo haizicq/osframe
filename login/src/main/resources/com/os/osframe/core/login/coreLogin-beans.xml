@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd   
+    http://www.springframework.org/schema/util 
+    http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+    <description>Shiro 配置</description>
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager" />
+        <property name="loginUrl" value="/login.html" />
+        <!--<property name="successUrl" value="/index.jsp" />-->
+        <property name="unauthorizedUrl" value="/error/noperms.jsp" />
+        <property name="filters">
+            <map>
+                <entry key="loginAuth">
+                    <bean class="com.os.osframe.core.login.filter.MscAuthenticationFilter"></bean>
+                </entry>
+            </map>
+        </property>
+        <property name="filterChainDefinitions">
+            <value>
+                /submitLogin.html*=anon
+                /login.html*=anon
+                /logout.html*=anon
+                /error/noperms.jsp*= anon
+                /common/**=anon
+                /resource/**=anon
+                /*.ico=anon
+                /admin/install/**=anon
+                /**.jsp* = loginAuth
+                /**.html* = loginAuth
+                /** = loginAuth
+            </value>
+        </property>
+    </bean>
+
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <!--设置自定义realm -->
+        <property name="realm" ref="monitorRealm" />
+        <!--<property name="sessionManager" ref="sessionManager" />-->
+    </bean>
+
+    <!-- 会话ID生成器 -->
+    <bean id="sessionIdGenerator" class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator" />
+    <!-- 会话DAO -->
+    <bean id="sessionDAO" class="org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO">
+        <property name="activeSessionsCacheName" value="shiro-activeSessionCache" />
+        <property name="sessionIdGenerator" ref="sessionIdGenerator" />
+    </bean>
+    <!-- 会话验证调度器 -->
+    <!--<bean id="sessionValidationScheduler" class="org.apache.shiro.session.mgt.quartz.QuartzSessionValidationScheduler">-->
+        <!--<property name="sessionValidationInterval" value="30000" />-->
+        <!--<property name="sessionManager" ref="sessionManager" />-->
+    <!--</bean>-->
+    <!-- 会话管理器 -->
+    <bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+        <property name="globalSessionTimeout" value="30000" />
+        <!--<property name="deleteInvalidSessions" value="true" />-->
+        <!--<property name="sessionValidationSchedulerEnabled" value="true" />-->
+        <!--<property name="sessionValidationScheduler" ref="sessionValidationScheduler" />-->
+        <!--<property name="sessionDAO" ref="sessionDAO" />-->
+    </bean>
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+
+    <!--自定义Realm 继承自AuthorizingRealm -->
+    <bean id="monitorRealm" class="com.os.osframe.core.login.service.MscLoginRealm"></bean>
+
+    <!-- securityManager-->
+    <bean
+            class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="staticMethod"
+                  value="org.apache.shiro.SecurityUtils.setSecurityManager" />
+        <property name="arguments" ref="securityManager" />
+
+    </bean>
+
+    <!-- Enable Shiro Annotations for Spring-configured beans. Only run after -->
+    <!-- the lifecycleBeanProcessor has run: -->
+    <bean
+            class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+            depends-on="lifecycleBeanPostProcessor" />
+    <bean
+            class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager" />
+
+    </bean>
+
+</beans>

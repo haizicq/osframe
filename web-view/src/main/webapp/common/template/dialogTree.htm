@@ -1,0 +1,32 @@
+<div class="modal-header">
+    <h5 class="modal-title">{{dialog.title}}</h5>
+</div>
+<div class="modal-body clearfix">
+    <div class="col-sm-12"  style="height:240px">
+        <!-- 集成ztree展示导航 -->
+        <div class="ztree" id="dialog-ztree" >
+
+        </div>
+    </div>
+    <div >
+        <!-- 需要修改为文本加删除符号的形式 达到可以删除的目的，文本字符数控制在10个字符以内-->
+        当前选中值：
+        <span ng-repeat="item in dialog.selectValue" >
+            <span ng-if="item.text.length>10" style="display: inline-block;width:100px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;vertical-align: top;">
+                {{item.text}}
+            </span>
+            <span ng-if="item.text.length<=10" >
+                {{item.text}}
+            </span>
+            <i class="fa fa-times" style="color:red;font-size:0.7em;vertical-align: top;" ng-click="deleteSelect($index)"></i>
+        </span>
+    </div>
+</div>
+<div class="modal-footer">
+    <div >
+        <button class="btn btn-default" ng-click="cancel()">取消</button>
+        <button class="btn btn-default" ng-click="cancelSelect()">取消选择</button>
+
+        <button class="btn btn-primary" ng-click="ok()">确定</button>
+    </div>
+</div>

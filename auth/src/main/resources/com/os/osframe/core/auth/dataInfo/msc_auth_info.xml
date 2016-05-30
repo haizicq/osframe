@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tables
+	xmlns="http://www.example.org/dataInfo"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.example.org/dataInfo  http://www.example.org/dataInfo/xml/dataInfo.xsd">
+	<!--
+	    权限设计，角色和链接权限在xml中定义，然后写入到表中供调用。
+	    包含表：角色分组、角色表（角色授权表）、权限表、url链接、数据权限表
+
+	    角色分组表：ID、名称、备注、关键字、排序号
+	    角色表：ID 、名称、关键字、角色类型(管理员(所有权限)/开发者(所有权限、弹出调试日志)/匿名(可定制部分权限)、自定义权限/集团管理员)、上级角色、有效性、所属分组
+	    权限表：ID、名称、国际化名称、描述、角色key、控制路径前缀、所属模块、所属系统、导入时间
+	    角色授权（角色表的多对多字段）：角色ID 、权限ID
+	    角色成员（角色表的多对多字段）
+
+	    数据权限记录表：ID 、模块ID 、模块包路径、数据类型(阅读者／编辑者／下载者)、为空处理(所有人有权限/所有人无权限)、人员查看列表、人员解析列表
+
+	    设计思路，权限不与菜单绑定，而直接在项目中通过配置将链接的权限属性配置进去，
+	    权限校验可以直接按角色校验，也可以按自定义的权限类型校验
+
+        数据权限过滤设计，模块需要关联数据权限时，只需要在保存的时候调用权限数据保存将数据保存到这张表来，
+        解析时直接高年级模块包路径和id来查到记录，然后将查询数据直接过滤出来，或者提示权限不足
+        数据过滤调用url直接进入时，在进入之前根据url判断模块，然后根据配置的id规则判断模块主键，然后直接拦截
+
+	  	功能设计：权限导入(提供xml配置)、数据信息要由模块保存数据时写入、角色分组下展示角色
+
+	  	集团授权：普通员工只能查看自己有权限的数据、模块管理员只能查看本组织下的数据、管理组的模块管理员可以查看整个集团数据
+	  	数据如何与组织关联？权限数据表的拥有者主表放所属组织并标记数据所属
+
+	  	权限模块的依赖和使用
+			1、所有模块均通过这种配置方式来配置模块的权限
+			2、在项目启动时，会统一读取模块下的权限配置，加载到内存中
+			3、登陆时，查询数据库将用户拥有的权限设置到登陆信息中
+			4、访问url时，先跳转到权限控制的拦截器，取出url相关的权限拦截，
+				再到用户的权限中去匹配，如果不匹配则不查看，匹配则允许查看
+			5、自定义校验器拦截，当为自定义的如数据拦截时，取出参数中传递的数据，然后将数据去匹配可阅读者这些信息，匹配不到则不予以查看
+			6、数据列表拦截：根据登陆用户角色如果为管理员、开发者、集团模块管理员则不做任何过滤，如果为模块管理员则根据组织过滤
+				如果为自定义权限角色时，在查询条件后拼接sql实现权限控制，对权限数据中模块关键字下，
+				所有类型数据有权限人员与当前登录人员去匹配
+				注意：匿名用户不做数据权限过滤
+			7、开发一套权限控制的标签
+	  	依赖关系：登录模块依赖权限、需要权限控制的模块依赖权限、权限依赖（组织用户、基础框架、静态库）
+	  	实现工作：
+	  		权限模块：解析xml、权限拦截器、数据过滤器、自定义拦截器、权限标签
+	  		登陆模块：实现登陆取权限数据写入共用类
+	  		基础框架：登陆信息公共类
+	  		组织：将登陆用户账号转为登陆用户对象
+	  -->
+
+	<table name="msc_auth_info" info="权限信息" status="true">
+		<fields>
+			<field name="名称" id="lb_name" javaType="String" type="varchar" length="200"/>
+			<field name="描述" id="lb_info" javaType="String" type="varchar" length="255"/>
+			<field name="权限代码" id="lb_auth_key" javaType="String" type="varchar" length="200"/>
+			<field name="URL前缀" id="lb_url_prefix" javaType="String" type="varchar" length="200"/>
+			<field name="所属模块" id="lb_module" javaType="String" type="varchar" length="200"/>
+			<field name="所属系统" id="lb_system" javaType="String" type="varchar" length="200"/>
+			<field name="模块关键字" id="lb_module_key" javaType="String" type="varchar" length="200"/>
+			<field name="系统关键字" id="lb_system_key" javaType="String" type="varchar" length="200"/>
+			<field name="更新时间" id="lb_update_time" javaType="Date" />
+			<field name="排序号" id="lb_order" javaType="Integer" />
+		</fields>
+	</table>
+    <table name="msc_auth_category" info="角色分组" status="true">
+		<fields>
+			<field name="名称" id="lb_name" javaType="String" type="varchar" length="200"/>
+			<field name="关键字" id="lb_key" javaType="String" type="varchar" length="200"/>
+            <field name="排序号" id="lb_order" javaType="Integer" />
+			<field name="备注" id="lb_info" javaType="String" type="varchar" length="255"/>
+			<field name="更新时间" id="lb_update_time" javaType="Date" />
+		</fields>
+	</table>
+	<table name="msc_auth_role" info="角色信息" status="true">
+		<fields>
+			<field name="名称" id="lb_name" javaType="String" type="varchar" length="200"/>
+			<field name="关键字" id="lb_key" javaType="String" type="varchar" length="200"/>
+			<field name="类型" id="lb_type" javaType="String" type="varchar" length="200"/>
+			<field name="是否有效" id="lb_is_valid" javaType="String" type="varchar" length="10"/>
+			<field name="备注" id="lb_info" javaType="String" type="varchar" length="255"/>
+			<field name="更新时间" id="lb_update_time" javaType="Date" />
+			<field
+					id="lb_parent"
+					name="上级角色"
+					javaType="com.bladeray.softdp.msc.auth.domain.MscAuthRole"
+					foreignId="pkId"
+					foreignName="lbName"
+					selectType="select"
+					dataSource="database"/>
+			<field
+					id="lb_role_category"
+					name="角色分类"
+					javaType="com.bladeray.softdp.msc.auth.domain.MscAuthCategory"
+					foreignId="pkId"
+					foreignName="lbName"
+					selectType="select"
+					dataSource="database"/>
+			<field
+					id="lb_auth_list"
+					name="角色权限"
+					javaType="com.bladeray.softdp.msc.auth.domain.MscAuthInfo"
+					mapping="ManyToMany"
+					foreignId="pkId"
+					foreignName="lbName"
+					selectType="select"
+					dataSource="database"/>
+			<field
+					id="lb_person_list"
+					name="角色成员"
+					javaType="com.bladeray.softdp.msc.users.domain.MscUsersInfo"
+					mapping="ManyToMany"
+					foreignId="pkId"
+					foreignName="lbName"
+					selectType="select"
+					dataSource="database"/>
+		</fields>
+	</table>
+
+	<table name="msc_auth_data" info="数据权限" status="true">
+		<fields>
+			<field name="所属模块" id="lb_module" javaType="String" type="varchar" length="200"/>
+			<field name="所属系统" id="lb_system" javaType="String" type="varchar" length="200"/>
+			<field name="模块关键字" id="lb_module_key" javaType="String" type="varchar" length="200"/>
+			<field name="系统关键字" id="lb_system_key" javaType="String" type="varchar" length="200"/>
+			<field name="模块ID" id="lb_model_id" javaType="String" type="varchar" length="200"/>
+			<field name="类型" id="lb_type" javaType="String" type="varchar" length="2"/>
+			<field name="为空处理" id="lb_null_type" javaType="String" type="varchar" length="2"/>
+
+			<field name="更新时间" id="lb_update_time" javaType="Date" />
+
+			<field
+					id="lb_person_list"
+					name="角色成员"
+					javaType="com.bladeray.softdp.msc.users.domain.MscUsersInfo"
+					mapping="ManyToMany"
+					foreignId="pkId"
+					foreignName="lbName"
+					selectType="select"
+					dataSource="database"/>
+
+			<field
+					id="lb_all_person_list"
+					name="角色成员"
+					javaType="com.bladeray.softdp.msc.users.domain.MscUsersInfo"
+					mapping="ManyToMany"
+					foreignId="pkId"
+					foreignName="lbName"
+					selectType="select"
+					dataSource="database"/>
+		</fields>
+	</table>
+</tables>

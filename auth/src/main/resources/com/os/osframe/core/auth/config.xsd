@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="http://www.example.org/xml/config"
+        elementFormDefault="qualified">
+<!--
+    权限控制
+        module 定义一个模块，一个文件可以包含多个模块，多个地方定义模块中定义的内容根据关键字相同识别为同一模块
+        auth权限配置区域
+        roles配置所有的权限，多个用分号隔开
+        url 需要拦截的url前缀和默认权限配置
+        target 目标方法权限配置
+        1、简单权限控制：直接在target中设置目标名称和权限角色，只要用户有这个角色就可以获取该方法的访问权限
+        2、自定义权限控制：在validate中配置校验函数，默认传递param定义的参数，多个用分号隔开，解析的时候直接去url中获取这些参数传递的值
+        3、常用的定义权限：校验是否可阅读者等
+
+
+-->
+    <simpleType name="class">
+        <annotation>
+            <documentation>Java类</documentation>
+        </annotation>
+        <restriction base="string"></restriction>
+    </simpleType>
+    <element name="configs">
+        <annotation>
+            <documentation>模块下的配置信息</documentation>
+        </annotation>
+        <complexType>
+            <sequence>
+                <element
+                        name="module" maxOccurs="unbounded" minOccurs="1">
+                    <annotation>
+                        <documentation>模型信息</documentation>
+                    </annotation>
+                    <complexType>
+                        <sequence>
+                            <element name="auth" maxOccurs="1" minOccurs="1">
+                                <annotation>
+                                    <documentation>
+                                       权限配置
+                                    </documentation>
+                                </annotation>
+                                <complexType>
+                                    <sequence maxOccurs="unbounded" minOccurs="1">
+                                        <element name="roles"
+                                                 type="string"
+                                                 maxOccurs="1"
+                                                 minOccurs="0">
+                                            <annotation>
+                                                <documentation>
+                                                    权限信息，用“;”分开多个角色权限
+                                                </documentation>
+                                            </annotation>
+
+                                        </element>
+                                        <element name="urls">
+                                            <annotation>
+                                                <documentation>
+                                                    url拦截配置
+                                                </documentation>
+                                            </annotation>
+                                            <complexType>
+                                                <sequence>
+                                                    <element name="url">
+                                                    <annotation>
+                                                        <documentation>
+                                                            指定的url配置
+                                                        </documentation>
+                                                    </annotation>
+                                                    <complexType>
+                                                        <sequence>
+                                                            <element name="target">
+                                                                <annotation>
+                                                                    <documentation>
+                                                                        目标路径
+                                                                    </documentation>
+                                                                </annotation>
+                                                                <complexType>
+                                                                    <attribute
+                                                                            name="name"
+                                                                            use="required">
+                                                                        <annotation>
+                                                                            <documentation>
+                                                                                目标方法名
+                                                                            </documentation>
+                                                                        </annotation>
+                                                                    </attribute>
+                                                                    <attribute
+                                                                            name="role">
+                                                                        <annotation>
+                                                                            <documentation>
+                                                                                控制角色
+                                                                            </documentation>
+                                                                        </annotation>
+                                                                    </attribute>
+                                                                    <attribute
+                                                                            name="param">
+                                                                        <annotation>
+                                                                            <documentation>
+                                                                                处理参数名
+                                                                            </documentation>
+                                                                        </annotation>
+                                                                    </attribute>
+                                                                    <attribute
+                                                                            name="validate">
+                                                                        <annotation>
+                                                                            <documentation>
+                                                                                自定义校验器
+                                                                            </documentation>
+                                                                        </annotation>
+                                                                    </attribute>
+                                                                </complexType>
+                                                            </element>
+                                                        </sequence>
+                                                        <attribute
+                                                                name="href"
+                                                                use="required">
+                                                            <annotation>
+                                                                <documentation>
+                                                                    需要拦截的url
+                                                                </documentation>
+                                                            </annotation>
+                                                        </attribute>
+                                                        <attribute
+                                                                name="default">
+                                                            <annotation>
+                                                                <documentation>
+                                                                    链接的默认权限
+                                                                </documentation>
+                                                            </annotation>
+                                                        </attribute>
+                                                    </complexType>
+                                                    </element>
+
+                                                </sequence>
+
+                                            </complexType>
+                                        </element>
+                                    </sequence>
+                                </complexType>
+                            </element>
+
+                        </sequence>
+                        <attribute
+                                name="name"
+                                type="string"
+                                use="required">
+                            <annotation>
+                                <documentation>
+                                    模块名称
+                                </documentation>
+                            </annotation>
+                        </attribute>
+                        <attribute
+                                name="url"
+                                type="string"
+                                use="required">
+                            <annotation>
+                                <documentation>
+                                    模块根路径
+                                </documentation>
+                            </annotation>
+                        </attribute>
+                        <attribute
+                                name="key"
+                                type="string"
+                                use="required">
+                            <annotation>
+                                <documentation>
+                                    模块关键字
+                                </documentation>
+                            </annotation>
+                        </attribute>
+                        <attribute
+                                name="default"
+                                type="string"
+                                use="required">
+                            <annotation>
+                                <documentation>
+                                    默认权限
+                                </documentation>
+                            </annotation>
+                        </attribute>
+                        <attribute
+                                name="root"
+                                type="string">
+                            <annotation>
+                                <documentation>
+                                    模块最高权限
+                                </documentation>
+                            </annotation>
+                        </attribute>
+                    </complexType>
+                </element>
+            </sequence>
+        </complexType>
+    </element>
+</schema>

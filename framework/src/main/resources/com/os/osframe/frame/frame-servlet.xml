@@ -1,0 +1,40 @@
+﻿<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+           http://www.springframework.org/schema/context   
+           http://www.springframework.org/schema/context/spring-context-3.1.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!-- 扫描web包，应用Spring的注解 -->
+    <context:component-scan base-package="com.os.osframe.**.web"/>
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+    <bean id="defaultAnnotationHandlerMapping"
+          class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
+    <bean id="annotationMethodHandlerAdapter"
+          class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
+
+    <!-- 配置视图解析器，将ModelAndView及字符串解析为具体的页面 -->
+    <bean
+            class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+            p:viewClass="org.springframework.web.servlet.view.JstlView"
+            p:prefix="/WEB-INF/jsp/"
+            p:suffix=".jsp"/>
+
+    <!--<mvc:resources mapping="/**/*.htm" location="/" order="0" />-->
+    <!--<mvc:resources mapping="/common/**" location="/common/" order="1" />-->
+    <!--<mvc:resources mapping="/resource/**" location="/resource/" order="2" />-->
+    <!-- 设置返回类型为UTF-8 -->
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <bean class="com.os.osframe.frame.convert.UTF8StringHttpMessageConverter" />
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+    <!-- 附件解析器
+            p:uploadTempDir="upload/java/"-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
+            p:defaultEncoding="UTF-8"
+            p:maxUploadSize="5242880"
+            p:maxInMemorySize="40960"/>
+</beans>  

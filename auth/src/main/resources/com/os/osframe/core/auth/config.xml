@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configs xmlns="http://www.example.org/xml/config"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.example.org/xml/config  config.xsd">
+    <!-- 模块定义 名称、根路径、模块关键字、默认权限 -->
+    <module name="a" url="b" key="c" default="1" root="">
+
+        <!-- 权限配置 -->
+        <auth>
+            <!-- 角色定义 default为默认权限-->
+            <roles>
+
+            </roles>
+            <!-- url拦截 -->
+            <urls>
+                <!-- href为链接url前缀 default为该url片段下的默认权限 -->
+                <url href="" default="">
+                    <!-- 方法拦截策略 name方法名 param截取判断的参数名 role角色 validate自定义校验方法 -->
+                    <target name="" param="" role="" validate=""/>
+                </url>
+            </urls>
+            <!-- 查询数据拦截 无需配置，只要实现了数据拦截的接口，即在查询列表时自动判断-->
+
+        </auth>
+    </module>
+
+</configs>

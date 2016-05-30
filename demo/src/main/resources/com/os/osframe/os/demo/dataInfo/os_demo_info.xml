@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tables
+	xmlns="http://www.example.org/dataInfo"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.example.org/dataInfo  http://www.example.org/dataInfo/xml/dataInfo.xsd">
+	<!--
+	    样例模块
+	    展示内容包括：一个简单的增删改查功能、基础标签使用（对话框/时间/枚举等）、权限
+	    表设计
+	    os_demo_info
+	    字段：名称、类型、上级、所属组织、测试时间
+	    添加功能：url权限拦截、数据过滤
+	  -->
+
+	<table name="os_demo_info" info="测试信息" status="true">
+		<fields>
+			<field name="名称" id="lb_name" javaType="String" type="varchar" length="200"/>
+			<field name="类型" id="lb_type" javaType="String" type="varchar" length="2"/>
+			<field name="测试时间" id="lb_time" javaType="Date" />
+			<field
+					id="lb_parent"
+					name="上级"
+					javaType="com.bladeray.softdp.os.demo.domain.OsDemoInfo"
+					foreignId="pkId"
+					foreignName="lbName"
+					selectType="select"
+					dataSource="database"/>
+			<field
+					id="lb_dept"
+					name="所属组织"
+					javaType="com.bladeray.softdp.msc.users.domain.MscUsersInfo"
+					foreignId="pkId"
+					foreignName="lbName"
+					selectType="select"
+					dataSource="database"/>
+		</fields>
+	</table>
+
+</tables>

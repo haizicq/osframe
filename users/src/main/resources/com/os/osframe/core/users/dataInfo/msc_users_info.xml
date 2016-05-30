@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tables
+	xmlns="http://www.example.org/dataInfo"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.example.org/dataInfo  http://www.example.org/dataInfo/xml/dataInfo.xsd">
+	<!--
+	    表：
+	    基础表：主键、类型(人/组织/部门/岗位/群类)、层级Id、上级ID、关键字、编码、名称、备注、是否虚拟、是否有效、排序号、集成源关键字、集成主键、创建时间、修改时间
+	    人员信息表：主键、基础表ID、登陆名、密码、邮箱、电话、手机、其他通讯方式、默认语言
+	    部门组织表：主键、基础表ID、部门领导、
+	    岗位信息表：主键、基础表ID、岗位级别(由小到大，越小越大)、岗位类型(用于标注平行类岗位在不同部门中时，如部门的考勤员和财务人员)、岗位成员
+
+	    岗位类型表：主键、名称、编码、级别、关键字、备注（包括：总经理、副总、经理、副经理、主任、组长、考勤员、财务员等）
+
+        群组类型表：主键、名称、编码、关键字、备注（包括：一般群组、项目组、）
+
+	    群组组织表：主键、基础表ID、群组类型、群组领导
+	    群组岗位表：主键、基础表ID、岗位级别、岗位成员
+
+        //后续单独模块实现，这里组织设计可以达到支撑即可
+        集团分级授权：集团作为根级组织，底下挂各分子公司，业务模块设置时需要分别设置集团管理员以及各分子公司管理员，一般集团管理员由系统管理员设置，
+        而分子公司管理员由集团管理员设置，也可以由系统管理员设置
+
+	  -->
+
+    <table name="msc_users_info" info="组织基础信息" status="true">
+		<fields>
+			<field name="名称" id="lb_name" javaType="String" type="varchar" length="200"/>
+			<field name="关键字" id="lb_key" javaType="String" type="varchar" length="200"/>
+            <field name="类型" id="lb_type" javaType="String" type="varchar" length="200"/>
+            <field name="编码" id="lb_no" javaType="String" type="varchar" length="200"/>
+            <field name="排序号" id="lb_order" javaType="Integer" />
+            <field name="层级" id="lb_levels_id"  javaType="String" type="CLOB" length="2000"/>
+            <field name="是否虚拟" id="lb_is_virtual" javaType="String" type="varchar" length="10"/>
+            <field name="是否有效" id="lb_is_valid" javaType="String" type="varchar" length="10"/>
+            <field name="备注" id="lb_info" javaType="String" type="varchar" length="255"/>
+            <field name="创建时间" id="lb_create_time" javaType="Date" type="date"/>
+            <field name="修改时间" id="lb_update_time" javaType="Date" type="date"/>
+            <field name="集成源关键字" id="lb_source_key" javaType="String" type="varchar" length="200"/>
+            <field name="集成主键" id="lb_source_pk" javaType="String" type="varchar" length="200"/>
+            <field
+                    id="lb_parent"
+                    name="上级组织"
+                    javaType="com.bladeray.softdp.msc.users.domain.MscUsersInfo"
+                    foreignId="pkId"
+                    foreignName="lbName"
+                    selectType="select"
+                    dataSource="database"/>
+        </fields>
+	</table>
+    <table name="msc_users_org" info="部门组织" status="true">
+        <fields>
+            <field
+                    id="lb_users_info"
+                    name="基础信息"
+                    javaType="com.bladeray.softdp.msc.users.domain.MscUsersInfo"
+                    foreignId="pkId"
+                    foreignName="lbName"
+                    selectType="select"
+                    dataSource="database"/>
+            <field
+                    id="lb_leader"
+                    name="部门领导"
+                    javaType="com.bladeray.softdp.msc.users.domain.MscUsersInfo"
+                    foreignId="pkId"
+                    foreignName="lbName"
+                    selectType="select"
+                    dataSource="database"/>
+        </fields>
+    </table>
+
+    <table name="msc_users_person" info="人员信息" status="true">
+        <fields>
+            <field name="登录名" id="lb_login_name" javaType="String" type="varchar" length="200"/>
+            <field name="密码" id="lb_pwd" javaType="String" type="varchar" length="200"/>
+            <field name="邮箱" id="lb_mail" javaType="String" type="varchar" length="200"/>
+            <field name="电话" id="lb_phone" javaType="String" type="varchar" length="200"/>
+            <field name="手机" id="lb_mobile_phone" javaType="String" type="varchar" length="200"/>
+            <field name="其他通讯" id="lb_others" javaType="String" type="varchar" length="255"/>
+            <field name="默认语言" id="lb_language" javaType="String" type="varchar" length="10"/>
+            <field
+                    id="lb_users_info"
+                    name="基础信息"
+                    javaType="com.bladeray.softdp.msc.users.domain.MscUsersInfo"
+                    foreignId="pkId"
+                    foreignName="lbName"
+                    selectType="select"
+                    dataSource="database"/>
+        </fields>
+    </table>
+    <!-- 岗位信息表：主键、基础表ID、岗位级别(由小到大，越小越大，为空则为最小)、岗位类型(用于标注平行类岗位在不同部门中时，如部门的考勤员和财务人员)、岗位成员 -->
+    <table name="msc_users_job" info="岗位信息" status="true">
+        <fields>
+            <field name="级别" id="lb_level" javaType="String" type="varchar" length="200"/>
+
+            <field
+                    id="lb_job_type"
+                    name="岗位类型"
+                    javaType="com.bladeray.softdp.msc.users.domain.MscUsersJobType"
+                    foreignId="pkId"
+                    foreignName="lbName"
+                    selectType="select"
+                    dataSource="database"/>
+            <field
+                    id="lb_users_info"
+                    name="基础信息"
+                    javaType="com.bladeray.softdp.msc.users.domain.MscUsersInfo"
+                    foreignId="pkId"
+                    foreignName="lbName"
+                    selectType="select"
+                    dataSource="database"/>
+            <field
+                    id="lb_person_list"
+                    name="成员列表"
+                    javaType="com.bladeray.softdp.msc.users.domain.MscUsersInfo"
+                    mapping="ManyToMany"
+                    foreignId="pkId"
+                    foreignName="lbName"
+                    selectType="select"
+                    dataSource="database"/>
+
+        </fields>
+    </table>
+    <!-- 主键、名称、编码、级别、关键字、备注（包括：总经理、副总、经理、副经理、主任、组长、考勤员、财务员等）-->
+    <table name="msc_users_job_type" info="岗位类型" status="true">
+        <fields>
+            <field name="名称" id="lb_name" javaType="String" type="varchar" length="200"/>
+            <field name="编码" id="lb_no" javaType="String" type="varchar" length="200"/>
+            <field name="级别" id="lb_level" javaType="String" type="varchar" length="200"/>
+            <field name="关键字" id="lb_key" javaType="String" type="varchar" length="200"/>
+            <field name="备注" id="lb_info" javaType="String" type="varchar" length="200"/>
+            <field name="状态" id="lb_status" javaType="String" type="varchar" length="20"/>
+            <field name="更新时间" id="lb_update_time" javaType="Date" />
+        </fields>
+    </table>
+
+
+
+    <!-- 群组类型表：主键、名称、编码、关键字、备注（包括：简单群组、项目组、）-->
+    <table name="msc_users_group_type" info="群组类型" status="true">
+        <fields>
+            <field name="名称" id="lb_name" javaType="String" type="varchar" length="200"/>
+            <field name="编码" id="lb_no" javaType="String" type="varchar" length="200"/>
+            <field name="关键字" id="lb_key" javaType="String" type="varchar" length="200"/>
+            <field name="备注" id="lb_info" javaType="String" type="varchar" length="200"/>
+            <field name="状态" id="lb_status" javaType="String" type="varchar" length="20"/>
+            <field name="更新时间" id="lb_update_time" javaType="Date" />
+        </fields>
+    </table>
+
+
+    <!-- 群组组织表：主键、基础表ID、群组类型、群组领导-->
+    <table name="msc_users_group" info="群组组织" status="true">
+        <fields>
+            <field
+                    id="lb_leader"
+                    name="群组领导"
+                    javaType="com.bladeray.softdp.msc.users.domain.MscUsersInfo"
+                    foreignId="pkId"
+                    foreignName="lbName"
+                    selectType="select"
+                    dataSource="database"/>
+            <field
+                    id="lb_group_type"
+                    name="群组类型"
+                    javaType="com.bladeray.softdp.msc.users.domain.MscUsersGroupType"
+                    foreignId="pkId"
+                    foreignName="lbName"
+                    selectType="select"
+                    dataSource="database"/>
+            <field
+                    id="lb_users_info"
+                    name="基础信息"
+                    javaType="com.bladeray.softdp.msc.users.domain.MscUsersInfo"
+                    foreignId="pkId"
+                    foreignName="lbName"
+                    selectType="select"
+                    dataSource="database"/>
+            <!-- 群组成员：简单群组情况 -->
+            <field
+                    id="lb_person_list"
+                    name="成员列表"
+                    javaType="com.bladeray.softdp.msc.users.domain.MscUsersInfo"
+                    mapping="ManyToMany"
+                    joinTable="msc_users_group_persons"
+                    joinSourceField="lb_group_id"
+                    joinTargetField="lb_person_id"
+                    foreignId="pkId"
+                    foreignName="lbName"
+                    selectType="select"
+                    dataSource="database"/>
+        </fields>
+    </table>
+
+    <!-- 群组岗位表：主键、基础表ID、岗位级别、岗位成员-->
+    <table name="msc_users_group_job" info="群组岗位类型" status="true">
+        <fields>
+            <field name="岗位级别" id="lb_level" javaType="String" type="varchar" length="200"/>
+            <field
+                    id="lb_users_info"
+                    name="基础信息"
+                    javaType="com.bladeray.softdp.msc.users.domain.MscUsersInfo"
+                    foreignId="pkId"
+                    foreignName="lbName"
+                    selectType="select"
+                    dataSource="database"/>
+            <field
+                    id="lb_person_list"
+                    name="成员列表"
+                    javaType="com.bladeray.softdp.msc.users.domain.MscUsersInfo"
+                    mapping="ManyToMany"
+                    foreignId="pkId"
+                    foreignName="lbName"
+                    selectType="select"
+                    dataSource="database"/>
+        </fields>
+    </table>
+</tables>

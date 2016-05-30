@@ -1,0 +1,49 @@
+<div class="modal-header">
+    <h5 class="modal-title">{{dialog.title}}</h5>
+</div>
+<div class="modal-body">
+    <div>
+        <div class="form-group pull-in clearfix">
+
+            <div class="col-sm-4">
+                <button ng-if="dialog.isMultiple"  class="btn m-b-xs btn-sm btn-default btn-addon" ng-click="selectOption()"><i class="fa fa-plus"></i>添加选择</button>
+            </div>
+            <div class="col-sm-8">
+
+                <div class="input-group w-md pull-right" >
+                    <input type="text" class="form-control" ng-model="dialog.searchValue"  >
+                    <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" ng-click="search()">搜索</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group pull-in clearfix">
+            <div class="col-sm-12">
+                <select multiple class="form-control"  ng-dblclick="selectOption()"  style="height:240px" ng-model="dialog.selectList" ng-options="op.text for op in dialog.data">
+
+                </select>
+            </div>
+        </div>
+    </div>
+    <div >
+        <!-- 需要修改为文本加删除符号的形式 达到可以删除的目的，文本字符数控制在10个字符以内-->
+
+        当前选中值：
+        <span ng-repeat="item in dialog.selectValue" >
+            <span ng-if="item.text.length>10" style="display: inline-block;width:100px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;vertical-align: top;">
+                {{item.text}}
+            </span>
+            <span ng-if="item.text.length<=10" >
+                {{item.text}}
+            </span>
+            <i class="fa fa-times" style="color:red;font-size:0.7em;vertical-align: top;" ng-click="deleteSelect($index)"></i>
+        </span>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-default" ng-click="cancel()">取消</button>
+    <button class="btn btn-default" ng-click="cancelSelect()">取消选择</button>
+
+    <button class="btn btn-primary" ng-click="ok()">确定</button>
+</div>

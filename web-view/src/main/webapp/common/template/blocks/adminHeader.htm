@@ -1,0 +1,92 @@
+      <!-- navbar header -->
+      <div class="navbar-header {{app.settings.navbarHeaderColor}}">
+        <button class="pull-right visible-xs dk" ui-toggle-class="show" data-target=".navbar-collapse">
+          <i class="glyphicon glyphicon-cog"></i>
+        </button>
+        <button class="pull-right visible-xs" ui-toggle-class="off-screen" data-target=".app-aside" ui-scroll="app">
+          <i class="glyphicon glyphicon-align-justify"></i>
+        </button>
+        <!-- brand -->
+        <a href="#/" class="navbar-brand text-lt">
+          <i class="fa fa-btc"></i>
+          <img src="common/img/logo.png" alt="." class="hide">
+          <span class="hidden-folded m-l-xs">{{app.name}}</span>
+        </a>
+        <!-- / brand -->
+      </div>
+      <!-- / navbar header -->
+
+      <!-- navbar collapse -->
+      <div class="collapse navbar-collapse box-shadow {{app.settings.navbarCollapseColor}}">
+        <!-- buttons -->
+        <div class="nav navbar-nav m-l-sm hidden-xs">
+          <a href class="btn no-shadow navbar-btn" ng-click="app.settings.asideFolded = !app.settings.asideFolded">
+            <i class="fa {{app.settings.asideFolded ? 'fa-indent' : 'fa-dedent'}} fa-fw"></i>
+          </a>
+
+          <a ui-fullscreen></a>
+        </div>
+        <!-- / buttons -->
+
+        <!-- link and dropdown -->
+        <ul class="nav navbar-nav">
+          <li>
+            <a href="javascript:window.open(G.path.RootPath+'/index.html','_self')">首页</a>
+          </li>
+
+          <li><a href="javascript:window.open(G.path.RootPath+'/core/users/index.html','_self')">用户管理</a></li>
+          <li>
+            <a href="javascript:window.open(G.path.RootPath+'/core/auth/index.html','_self')">
+              <span >权限管理</span>
+            </a>
+          </li>
+
+        </ul>
+        <!-- / link and dropdown -->
+        <!-- nabar right -->
+        <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown " is-open="lang.isopen">
+            <a href class="dropdown-toggle" data-toggle="dropdown">
+              {{selectLang}} <b class="caret"></b>
+            </a>
+            <!-- dropdown -->
+            <ul class="dropdown-menu animated fadeInRight w">
+              <li ng-repeat="(langKey, label) in langs">
+                <a ng-click="setLang(langKey, $event)" href>{{label}}</a>
+              </li>
+            </ul>
+            <!-- / dropdown -->
+          </li>
+
+          <li class="dropdown ">
+            <a href class="dropdown-toggle clear" data-toggle="dropdown">
+             <i class="icon-user"></i> {{userName}}
+            </a>
+            <!-- dropdown -->
+            <ul class="dropdown-menu animated fadeInRight">
+
+              <li>
+                <a href="javascript:window.open(G.path.RootPath+'/my/index.html','_blank')">
+                  <span>个人信息</span>
+                </a>
+              </li>
+              <li>
+                <a href="javascript:window.open(G.path.RootPath+'/my/index.html#/pwd','_blank')">
+                  <span>修改密码</span>
+                </a>
+              </li>
+              <li>
+                <a ui-toggle-class="active" target=".settings">皮肤设置</a>
+              </li>
+              <li class="divider"></li>
+              <li>
+                <a href="javascript:window.open(G.path.RootPath+'/logout.html','_self')">登出</a>
+              </li>
+            </ul>
+            <!-- / dropdown -->
+          </li>
+        </ul>
+        <!-- / navbar right -->
+
+      </div>
+      <!-- / navbar collapse -->
