@@ -26,13 +26,13 @@
   其中com.os.osframe为基础包路径，os.demo为模块包路径，下面web、service、domain、dao为模块下各层次代码。
   资源文件中的i18n目录下为国际化文件，enums.properties文件为系统枚举定义文件，osDemo-beans.xml为模块的spring配置文件，注意模块的注解扫描不需要再这里配置，默认会扫描的，这里主要预留来做特殊处理。
 #5. 开发规范
- > 1）包路径应以com.os.osframe 开头，后面的模块包路径根据自行定义
- > 2）模块首页控制类继承BaseIndexController，普通实体控制类继承BaseController<实体类>
- > 3）实体类继承BaseDomain，并通过hibernate注解定义表名和字段映射
- > 4）DAO层类继承BaseDaoImpl<实体类>，接口继承IBaseDao<实体类>
- > 5）SERVICE层类继承BaseServiceImpl<实体类>，接口继承IBaseService<实体类>
- > 6）权限控制在web层控制类上增加@RequiresClassAuth注解
- > 7）模块默认权限包括管理员权限、默认权限、添加权限、查看权限、编辑权限、删除权限，同时在i18n的资源文件中定义这些权限名称name和描述info,新开发当web类增加了注解后再权限模块点击导入即可自动引入这些权限。参考demo模块的配置如下
+ * 1）包路径应以com.os.osframe 开头，后面的模块包路径根据自行定义
+ * 2）模块首页控制类继承BaseIndexController，普通实体控制类继承BaseController<实体类>
+ * 3）实体类继承BaseDomain，并通过hibernate注解定义表名和字段映射
+ * 4）DAO层类继承BaseDaoImpl<实体类>，接口继承IBaseDao<实体类>
+ * 5）SERVICE层类继承BaseServiceImpl<实体类>，接口继承IBaseService<实体类>
+ * 6）权限控制在web层控制类上增加@RequiresClassAuth注解
+ * 7）模块默认权限包括管理员权限、默认权限、添加权限、查看权限、编辑权限、删除权限，同时在i18n的资源文件中定义这些权限名称name和描述info,新开发当web类增加了注解后再权限模块点击导入即可自动引入这些权限。参考demo模块的配置如下
 ```
 ROLE_OS_DEMO_ADMIN.name=测试模块_管理员权限
 ROLE_OS_DEMO_ADMIN.info=拥有该权限可以对测试模块的所有功能进行管理
@@ -49,11 +49,10 @@ ROLE_OS_DEMO_EDIT.info=拥有该权限才可以对测试模块进行编辑
 ```
 
 
- > 8）枚举请在enums.properties中定义值，而在i18n中定义名称
+ * 8）枚举请在enums.properties中定义值，而在i18n中定义名称
 ```
 enumsDemo.simple=简单
 enumsDemo.middle=中等
 enumsDemo.difficulty=困难
 ```
-
 
