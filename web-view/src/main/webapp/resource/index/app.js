@@ -20,7 +20,7 @@ define(function (require, exports, module) {
                             cache:'false',
                             templateUrl: function($routeParams){
                                 var url=G.path.RootPath+'/portal.html';
-                                return url;
+                                return global.reg(url);
                             },
                             controllerUrl: G.path.RootPath+'/resource/index/portalCtrl.js'
                         }

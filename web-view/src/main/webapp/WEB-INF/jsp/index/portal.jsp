@@ -48,13 +48,13 @@
           快速链接
         </div>
         <div class="list-group bg-white">
-          <a href="javascript:window.open(G.path.RootPath+'/msc/users/index.html','_blank')" class="list-group-item">
+          <a href="${rootPath}/msc/users/index.html" class="list-group-item" target="_blank">
             <i class="fa fa-fw fa-envelope"></i> 用户管理
           </a>
-          <a href="javascript:window.open(G.path.RootPath+'/msc/auth/index.html','_blank')" class="list-group-item">
+          <a href="${rootPath}/msc/auth/index.html" class="list-group-item" target="_blank">
             <i class="fa fa-fw fa-eye"></i> 权限管理
           </a>
-          <a href class="list-group-item">
+          <a href="${rootPath}/os/demo/index.html" class="list-group-item" target="_blank">
             <i class="fa fa-fw fa-phone"></i> DEMO
           </a>
         </div>

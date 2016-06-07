@@ -40,7 +40,7 @@
     <!-- footer -->
     <div class="page-footer wrapper b-t bg-light">
         <span class="pull-right">{{app.version}} <a href ui-scroll="app" class="m-l-sm text-muted"><i class="fa fa-long-arrow-up"></i></a></span>
-        &copy; 2014 Copyright.
+        &copy; 2016 Copyright.
     </div>
     <!-- / footer -->
 
