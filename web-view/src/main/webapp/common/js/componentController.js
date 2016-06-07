@@ -15,7 +15,7 @@ define(function (require, exports, module) {
             // config
             $scope.app = {
                 name: '企业信息系统',
-                version: '1.1.3',
+                version: '1.0.0',
                 // for chart colors
                 color: {
                     primary: '#7266ba',
