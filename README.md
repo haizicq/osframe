@@ -36,10 +36,8 @@
 ```
 ROLE_OS_DEMO_ADMIN.name=测试模块_管理员权限
 ROLE_OS_DEMO_ADMIN.info=拥有该权限可以对测试模块的所有功能进行管理
-
 ROLE_OS_DEMO_DEFAULT.name=测试模块_默认权限
 ROLE_OS_DEMO_DEFAULT.info=拥有该权限才可以对测试模块拥有使用权限
-
 ROLE_OS_DEMO_ADD.name=测试模块_添加权限
 ROLE_OS_DEMO_DELETE.name=测试模块_删除权限
 ROLE_OS_DEMO_LOOK.name=测试模块_查看权限
