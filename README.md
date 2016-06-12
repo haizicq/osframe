@@ -55,4 +55,7 @@ enumsDemo.simple=简单
 enumsDemo.middle=中等
 enumsDemo.difficulty=困难
 ```
+＃5.技术交流群
+   330710190（OSFrame技术交流群）
+   欢迎大家加入，共同探讨使用过程中的问题。
 
